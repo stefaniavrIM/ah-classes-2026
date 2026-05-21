@@ -1,0 +1,142 @@
+{
+  "spreadsheetId": "1gnLadpp6a3SldQm9ryK8znogvS2c1iLhYe5wivqIt44",
+  "valueRanges": [
+    {
+      "range": "Projects!A1:N969",
+      "majorDimension": "ROWS",
+      "values": [
+        [
+          "Order",
+          "Class Code",
+          "Class Title",
+          "Short blurb",
+          "Full Description",
+          "Professor Name",
+          "",
+          "Concept Tags",
+          "Semester Offered",
+          "Credits",
+          "Past Student Work",
+          "Video Link",
+          "Tile image",
+          "Status"
+        ],
+        [
+          "1",
+          "Class Code",
+          "Class title",
+          "25 words max description",
+          "full description",
+          "Professor Name",
+          "Interactive Media, Music",
+          "Gender Studies",
+          "Fall 2026",
+          "Fall 2026",
+          "",
+          "https://youtu.be/LC2akgHek0Q?si=zDBYMbz9gpv3ymlw",
+          "data/images/2_1_Class_Code_Class_title.jpg"
+        ],
+        [
+          "5",
+          "Class Code",
+          "Class title",
+          "",
+          "full description",
+          "Professor Name",
+          "Interactive Media, Music",
+          "",
+          "Fall 2027",
+          "Fall 2027",
+          "",
+          "https://youtu.be/LC2akgHek0Q?si=zDBYMbz9gpv3ymlw",
+          "data/images/3_5_Class_Code_Class_title.jpg"
+        ],
+        [
+          "1",
+          "Class Code",
+          "Class title",
+          "",
+          "full description",
+          "Professor Name",
+          "Interactive Media, Music",
+          "",
+          "Fall 2028",
+          "Fall 2028",
+          "",
+          "https://youtu.be/LC2akgHek0Q?si=zDBYMbz9gpv3ymlw",
+          "data/images/4_1_Class_Code_Class_title.jpg"
+        ],
+        [
+          "5",
+          "Class Code",
+          "Class title",
+          "",
+          "full description",
+          "Professor Name",
+          "Interactive Media, Music",
+          "",
+          "Fall 2029",
+          "Fall 2029",
+          "",
+          "https://youtu.be/LC2akgHek0Q?si=zDBYMbz9gpv3ymlw",
+          "data/images/5_5_Class_Code_Class_title.jpg"
+        ]
+      ]
+    },
+    {
+      "range": "Videos!A1:E1000",
+      "majorDimension": "ROWS",
+      "values": [
+        [
+          "Order",
+          "Title",
+          "Video Link",
+          "Cover Link",
+          "Tags"
+        ]
+      ]
+    },
+    {
+      "range": "'Recorded Events'!A1:E1000",
+      "majorDimension": "ROWS",
+      "values": [
+        [
+          "Order",
+          "Title",
+          "Description",
+          "Link",
+          "Tags"
+        ]
+      ]
+    },
+    {
+      "range": "'Archival Book'!A1:F1000",
+      "majorDimension": "ROWS",
+      "values": [
+        [
+          "Order",
+          "Title",
+          "Image Link",
+          "Image Link (Converted Google Drive)",
+          "Book Link",
+          "Image Link (Original Google Drive)"
+        ]
+      ]
+    },
+    {
+      "range": "'Live Events'!A1:G14",
+      "majorDimension": "ROWS",
+      "values": [
+        [
+          "Order",
+          "Title",
+          "Time",
+          "Duration",
+          "Description",
+          "Link",
+          "Tags"
+        ]
+      ]
+    }
+  ]
+}
