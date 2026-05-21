@@ -7,11 +7,24 @@ function clamp01(value) {
   return Math.min(1, Math.max(0, value));
 }
 
-// Remember the last header state so we only toggle classes when the scroll
-// position actually crosses the threshold, not on every animation frame.
-// Reassigning className every frame near the threshold is what caused the
-// header text to flicker.
+// Track the header state and only flip it across a hysteresis band.
+// The condensed header hides <h1> with display:none, which removes it from
+// layout and shortens the page. On a short page that nudges scrollY back
+// across a single threshold every frame -> flicker. Two separated thresholds
+// (condense higher, expand lower) break that feedback loop. null = not yet
+// initialized.
 var headerCondensed = null;
+
+function applyHeaderState(condensed, largeHeading, smallHeading) {
+  headerCondensed = condensed;
+  if (condensed) {
+    largeHeading.className = "hidden";
+    smallHeading.className = "";
+  } else {
+    largeHeading.className = "";
+    smallHeading.className = "hidden";
+  }
+}
 
 function loop() {
   var largeHeading = document.getElementsByTagName("h1")[0];
@@ -21,25 +34,26 @@ function loop() {
     return;
   }
 
-  var threshold = window.innerWidth * 0.3;
-  var condensed = window.scrollY > threshold;
+  var base = window.innerWidth * 0.3;
+  // Margin is wider than the ~12vw layout shift caused by hiding <h1>,
+  // so the clamp that follows can't push scrollY back across the band.
+  var margin = window.innerWidth * 0.15;
+  var scrollY = window.scrollY;
 
-  if (condensed) {
-    smallHeading.style.opacity = clamp01(2 * (window.scrollY - threshold) / window.innerWidth / 0.3);
-  } else {
-    largeHeading.style.opacity = clamp01((threshold - window.scrollY) / window.innerWidth / 0.3);
+  if (headerCondensed === null) {
+    // First run: establish the baseline from the current scroll position.
+    applyHeaderState(scrollY > base, largeHeading, smallHeading);
+  } else if (!headerCondensed && scrollY > base + margin) {
+    applyHeaderState(true, largeHeading, smallHeading);
+  } else if (headerCondensed && scrollY < base - margin) {
+    applyHeaderState(false, largeHeading, smallHeading);
   }
 
-  // Only swap the visible/hidden heading when crossing the threshold.
-  if (condensed !== headerCondensed) {
-    headerCondensed = condensed;
-    if (condensed) {
-      largeHeading.className = "hidden";
-      smallHeading.className = "";
-    } else {
-      largeHeading.className = "";
-      smallHeading.className = "hidden";
-    }
+  // Fade the currently visible heading as you scroll within the band.
+  if (headerCondensed) {
+    smallHeading.style.opacity = clamp01(2 * (scrollY - base) / window.innerWidth / 0.3);
+  } else {
+    largeHeading.style.opacity = clamp01((base - scrollY) / window.innerWidth / 0.3);
   }
 
   requestFrame(loop);
