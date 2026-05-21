@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>A&amp;H Classes for AY 2026-2027</title>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <meta charset="utf-8">
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0'>
+    <script src="js/vue.min.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <div v-if="!tiles.length" class="banner">
+        <p>Loading classes...</p>
+      </div>
+      <div class="header">
+        <div class="gradient"></div>
+        <h1>A&amp;H Classes for AY 2026-2027</h1>
+        <a href="https://nyuad.nyu.edu/" target="_blank"><img class="nyuad-logo" src="assets/nyuad-logo.png" alt="NYU Abu Dhabi"></a>
+        <h2><span><a v-on:click="goHome">A&amp;H Classes for AY 2026-2027</a></span></h2>
+        <div class="search">
+          <transition name="search-fade" v-on:enter="onSearchEnter">
+            <div class="search-input-container" v-if="searchInputVisible">
+              <input type="text" v-model="search" placeholder="Search keyword..."/>
+            </div>
+          </transition>
+          <button v-on:click="searchInputVisible = !searchInputVisible" id="search-button"></button>
+        </div>
+      </div>
+
+      <div v-if="!selectedTile" class="filter-bar">
+        <div class="filter-section" v-if="majors.length">
+          <span class="filter-label">Search by program</span>
+          <a v-on:click="filterTilesByTag('')" v-bind:class="{ active: !activeTag }">All</a>
+          <a v-for="major in majors" v-on:click="filterTilesByTag(major.name)" v-bind:class="{ active: activeTag === major.name }">{{ major.name }}</a>
+        </div>
+        <div class="filter-section theme-section">
+          <span class="filter-label">Search by theme</span>
+          <a v-on:click="filterTilesByTag('Gender Studies')" v-bind:class="{ active: activeTag === 'Gender Studies' }">Gender Studies</a>
+          <a v-on:click="filterTilesByTag('Conflict')" v-bind:class="{ active: activeTag === 'Conflict' }">Conflict</a>
+          <a v-on:click="filterTilesByTag('Identity')" v-bind:class="{ active: activeTag === 'Identity' }">Identity</a>
+          <a v-on:click="filterTilesByTag('Traditional Painting')" v-bind:class="{ active: activeTag === 'Traditional Painting' }">Traditional Painting</a>
+        </div>
+      </div>
+
+      <div v-if="selectedTile" class="course-detail">
+        <button class="back-button" v-on:click="closeCourse">Back to all classes</button>
+        <div class="course-hero" v-if="selectedTile.image" v-lazy-bg="'linear-gradient(to right, #000c, #0008, #0000), url('+selectedTile.image+')'"></div>
+        <div class="course-detail-content">
+          <p class="course-code" v-if="selectedTile.classCode">{{ selectedTile.classCode }}</p>
+          <h3 v-html="selectedTile.title"></h3>
+          <h4 v-if="selectedTile.professor">Professor: {{ selectedTile.professor }}</h4>
+          <p class="course-blurb" v-if="selectedTile.description" v-html="selectedTile.description"></p>
+          <p class="course-full-description" v-if="selectedTile.fullDescription" v-html="selectedTile.fullDescription"></p>
+
+          <div class="course-meta">
+            <div v-if="selectedTile.primaryMajor"><strong>Primary Major</strong><span>{{ selectedTile.primaryMajor }}</span></div>
+            <div v-if="selectedTile.crossListedMajors && selectedTile.crossListedMajors.length"><strong>Cross-Listed Majors</strong><span>{{ selectedTile.crossListedMajors.join(', ') }}</span></div>
+            <div v-if="selectedTile.semesterOffered"><strong>Semester Offered</strong><span>{{ selectedTile.semesterOffered }}</span></div>
+            <div v-if="selectedTile.credits"><strong>Credits</strong><span>{{ selectedTile.credits }}</span></div>
+          </div>
+
+          <div class="tags detail-tags" v-if="selectedTile.tags && selectedTile.tags.length">
+            <a v-for="tag in selectedTile.tags" v-on:click="filterFromDetail(tag)"># {{ tag }}</a>
+          </div>
+
+          <div class="detail-links">
+            <a v-if="selectedTile.pastStudentWork" v-bind:href="selectedTile.pastStudentWork" target="_blank">Past Student Work</a>
+            <a v-if="selectedTile.videoLink" v-bind:href="selectedTile.videoLink" target="_blank">Course Video</a>
+          </div>
+        </div>
+      </div>
+
+      <div v-if="!selectedTile" class="container">
+        <div v-if="search || activeTag" class="tile results">
+          <h3>Showing Results For</h3>
+          <h4><span v-if="search">&quot;{{ search }}&quot; </span><span v-if="activeTag"># {{ activeTag }}</span></h4>
+          <a v-on:click="removeFilters"><img src="assets/left-arrow-icon.svg" alt="Left Arrow Icon"><h5>Back to All Classes</h5></a>
+        </div>
+
+        <div v-bind:style="{ order: tile.order }" v-lazy-bg="'linear-gradient(to right, #000c, #000c, #0000), url('+tile.image+')'" class="tile project" v-for="tile in filteredProjectTiles">
+          <a class="course-tile-title" v-on:click="openCourse(tile)"><h3 v-html="tile.title"></h3></a>
+          <h4>{{ tile.subtitle }}</h4>
+          <p v-html="tile.description"></p>
+          <div class="tags" v-if="tile.tags">
+            <a v-for="tag in tile.tags" v-on:click.stop="filterTilesByTag(tag)"># {{ tag }}</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div class="notice">
+          <h3>Content Privacy</h3>
+          <p>This site and its content is private to the New York University community. Do not share screenshots, text, or other content from this page or linked pages without express permission from the authors.</p>
+          <br>
+          <p>&copy; New York University Abu Dhabi</p>
+        </div>
+      </div>
+    </div>
+    <script src="js/script.js"></script>
+  </body>
+</html>
