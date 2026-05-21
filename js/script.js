@@ -1,22 +1,48 @@
 // scrolling animation
-var scroll = window.requestAnimationFrame ||
-      function(callback){ window.setTimeout(callback, 1000/60)};
+var requestFrame = (window.requestAnimationFrame ||
+      function(callback){ window.setTimeout(callback, 1000/60); }).bind(window);
+
+function clamp01(value) {
+  if (isNaN(value)) return 0;
+  return Math.min(1, Math.max(0, value));
+}
+
+// Remember the last header state so we only toggle classes when the scroll
+// position actually crosses the threshold, not on every animation frame.
+// Reassigning className every frame near the threshold is what caused the
+// header text to flicker.
+var headerCondensed = null;
 
 function loop() {
-  let largeHeading = document.getElementsByTagName("h1")[0];
-  let smallHeading = document.getElementsByTagName("h2")[0];
-  if (!largeHeading || !smallHeading) return;
-
-  if (window.scrollY > window.innerWidth*.3) {
-    smallHeading.style.opacity = 2*(window.scrollY-window.innerWidth*.3)/window.innerWidth/.3;
-    largeHeading.className = "hidden";
-    smallHeading.className = "";
-  } else {
-    largeHeading.className = "";
-    smallHeading.className = "hidden";
-    largeHeading.style.opacity = (window.innerWidth*.3-window.scrollY)/window.innerWidth/.3;
+  var largeHeading = document.getElementsByTagName("h1")[0];
+  var smallHeading = document.getElementsByTagName("h2")[0];
+  if (!largeHeading || !smallHeading) {
+    requestFrame(loop);
+    return;
   }
-  scroll(loop);
+
+  var threshold = window.innerWidth * 0.3;
+  var condensed = window.scrollY > threshold;
+
+  if (condensed) {
+    smallHeading.style.opacity = clamp01(2 * (window.scrollY - threshold) / window.innerWidth / 0.3);
+  } else {
+    largeHeading.style.opacity = clamp01((threshold - window.scrollY) / window.innerWidth / 0.3);
+  }
+
+  // Only swap the visible/hidden heading when crossing the threshold.
+  if (condensed !== headerCondensed) {
+    headerCondensed = condensed;
+    if (condensed) {
+      largeHeading.className = "hidden";
+      smallHeading.className = "";
+    } else {
+      largeHeading.className = "";
+      smallHeading.className = "hidden";
+    }
+  }
+
+  requestFrame(loop);
 }
 
 loop();
